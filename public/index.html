@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+
+<script>
+    async function signup() {
+        const username = document.getElementById("signup-username").value;
+        const password = document.getElementById("signup-password").value;
+
+        if (username === "" || password === "") {
+            alert('username or password cannot be empty')
+        } else {
+            const response = await axios.post("http://localhost:3000/signup", {
+                username: username,
+                password: password
+            })
+
+            document.getElementById("signup-username").value = "";
+            document.getElementById("signup-password").value = "";
+
+            alert('Signed Up Successfully');
+        }
+
+    }
+
+    async function signin() {
+        const username = document.getElementById("signin-username").value;
+        const password = document.getElementById("signin-password").value;
+
+        const response = await axios.post("http://localhost:3000/signin", {
+            username: username,
+            password: password
+        })
+
+        document.getElementById("signin-username").value = "";
+        document.getElementById("signin-password").value = "";
+
+        localStorage.setItem("token", response.data.token)
+
+        alert('Signed In Successfully');
+
+    }
+
+    async function getUserInformation() {
+        const response = await axios.get("http://localhost:3000/me", {
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        });
+        document.getElementById("username-information").textContent = "Username: " + response.data.username
+        document.getElementById("password-information").textContent = "Password: " + response.data.password
+    }
+
+    function logout() {
+        localStorage.removeItem("token");
+
+        document.getElementById("username-information").textContent = "You are logged out"
+        document.getElementById("password-information").textContent = ""
+
+        document.getElementById("")
+    }
+
+</script>
+
+<body>
+
+    <div id="signup">
+        SignUp
+        <input id="signup-username" type="text" name="username" placeholder="Username">
+        <input id="signup-password" type="password" name="password" placeholder="Password">
+        <button onclick="signup( )">Submit</button>
+    </div>
+    <br>
+    <div id="signin">
+        SignIn
+        <input id="signin-username" type="text" name="username" placeholder="Username">
+        <input id="signin-password" type="password" name="password" placeholder="Password">
+        <button onclick="signin( )">Submit</button>
+    </div>
+    <br>
+    <div>
+        <button onclick="getUserInformation()">User Information</button>
+        <br>
+        <div id="username-information"></div>
+        <div id="password-information"></div>
+    </div>
+    <br>
+    <div>
+        <button onclick="logout()">LogOut</button>
+    </div>
+
+</body>
+
+</html>
